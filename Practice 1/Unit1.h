@@ -11,6 +11,7 @@
 #include <Graphics.hpp>
 #include <ActnList.hpp>
 #include <jpeg.hpp>
+#include <ImgList.hpp>
 //---------------------------------------------------------------------------
 class TForm1 : public TForm
 {
@@ -31,6 +32,8 @@ __published:	// IDE-managed Components
     TTimer *t_sprint_cd;
     TLabel *LBoostCdTxt;
     TLabel *LBoostCd1;
+    TTimer *t_shoot;
+    TImageList *ImageList1;
     void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
     void __fastcall FormKeyPress(TObject *Sender, char &Key);
@@ -40,6 +43,7 @@ __published:	// IDE-managed Components
     void __fastcall t_move_rightTimer(TObject *Sender);
     void __fastcall t_sprintTimer(TObject *Sender);
     void __fastcall t_sprint_cdTimer(TObject *Sender);
+    void __fastcall t_shootTimer(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

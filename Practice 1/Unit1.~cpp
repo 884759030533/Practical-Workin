@@ -17,7 +17,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 }
 //---------------------------------------------------------------------------
 
-int move_length = 4;
+int move_length = 10;
 int move_speed = 1;
 int sprint_timer = 0;
 int sprint_cooldown = 80; // 4.0 seconds cooldown
@@ -39,8 +39,8 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
         case 38: { t_move_up->Interval = move_speed; break; }
         case 40: { t_move_down->Interval = move_speed; break; }
 
-        //case 122: { move_speed/=2; LMvSpeed1->Caption = move_speed; break; }
-        //case 120: { move_speed*=2; LMvSpeed1->Caption = move_speed; break; }
+        case 122: { move_speed/=2; LMvSpeed1->Caption = move_speed; break; }
+        case 120: { move_speed*=2; LMvSpeed1->Caption = move_speed; break; }
 
         /*case 32: {
             if ( (sprint_timer>=0) && (sprint_cooldown<=0) ) break;
@@ -81,9 +81,9 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
         case 40: { t_move_down->Interval = 0; break; }
 
         case 16: {
-            if ( (sprint_timer>=0) || (sprint_cooldown<=0) ) break;
+            if ( (sprint_timer>=0) && (sprint_cooldown<=1) ) break;
             sprint_timer = 20;  // 1.5 seconds
-            move_length = 10;   // 2.2 times faster
+            move_length = 40;   // 2.2 times faster
             LMvLenTxt->Caption = IntToStr(move_length);
             t_sprint->Enabled = true;
             t_sprint_cd->Enabled = true;
@@ -145,7 +145,7 @@ void __fastcall TForm1::t_sprintTimer(TObject *Sender)
     sprint_timer--;
     if (sprint_timer <= 0)
     {
-        move_length = 4;
+        move_length = 10;
         LMvLenTxt->Caption = IntToStr(move_length);
         LMvBoost1->Caption = "0";
         t_sprint->Enabled = false;
