@@ -12,13 +12,14 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
 {
+    DoubleBuffered = true;
     Screen->Cursors[crNoDrop] = LoadCursorFromFile("G_cur.ani");
     Screen->Cursor = crNoDrop; // Load Green-styled Cursor
 }
 //---------------------------------------------------------------------------
 
-int move_length = 10;
-int move_speed = 1;
+int move_length = 20;
+int move_speed = 100;
 int sprint_timer = 0;
 int sprint_cooldown = 80; // 4.0 seconds cooldown
 
@@ -50,9 +51,9 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
             t_sprint_cd->Enabled = true;
             break; }  // */
 
-        case '1': { img_bg->Align = alLeft; break; }
-        case '2': { img_bg->Align = alBottom; break; }
-        case '3': { img_bg->Align = alRight; break; }
+        //case '1': { img_bg->Align = alLeft; break; }
+        //case '2': { img_bg->Align = alBottom; break; }
+        //case '3': { img_bg->Align = alRight; break; }
 
         case 27:  { Form1->Close(); break; }
     } //*/
@@ -87,9 +88,7 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
             LMvLenTxt->Caption = IntToStr(move_length);
             t_sprint->Enabled = true;
             t_sprint_cd->Enabled = true;
-            break; }  //////
-            //////
-            ///////////////////
+            break; }
     }
 }
 //---------------------------------------------------------------------------
@@ -147,7 +146,7 @@ void __fastcall TForm1::t_sprintTimer(TObject *Sender)
     sprint_timer--;
     if (sprint_timer <= 0)
     {
-        move_length = 10;
+        move_length = 5;
         LMvLenTxt->Caption = IntToStr(move_length);
         LMvBoost1->Caption = "0";
         t_sprint->Enabled = false;
@@ -174,4 +173,8 @@ void __fastcall TForm1::t_shootTimer(TObject *Sender)
     //
 }
 //---------------------------------------------------------------------------
+
+
+
+
 

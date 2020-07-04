@@ -87,7 +87,9 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
             LMvLenTxt->Caption = IntToStr(move_length);
             t_sprint->Enabled = true;
             t_sprint_cd->Enabled = true;
-            break; }
+            break; }  //////
+            //////
+            ///////////////////
     }
 }
 //---------------------------------------------------------------------------
