@@ -17,9 +17,23 @@ class Tmain_form : public TForm
 __published:	// IDE-managed Components
     TDrawGrid *main_grid;
     TImageList *sprite_list;
-    TImage *Image1;
+    TTimer *t_move_left;
+    TTimer *t_move_down;
+    TTimer *t_move_right;
+    TTimer *t_move_up;
+    TTimer *t_sprint;
+    TTimer *t_bullet;
     void __fastcall main_gridDrawCell(TObject *Sender, int ACol, int ARow,
           TRect &Rect, TGridDrawState State);
+    void __fastcall main_gridKeyPress(TObject *Sender, char &Key);
+    void __fastcall main_gridKeyUp(TObject *Sender, WORD &Key,
+          TShiftState Shift);
+    void __fastcall t_move_leftTimer(TObject *Sender);
+    void __fastcall t_move_rightTimer(TObject *Sender);
+    void __fastcall t_move_upTimer(TObject *Sender);
+    void __fastcall t_move_downTimer(TObject *Sender);
+    void __fastcall t_sprintTimer(TObject *Sender);
+    void __fastcall t_bulletTimer(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall Tmain_form(TComponent* Owner);
