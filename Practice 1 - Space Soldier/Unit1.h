@@ -7,6 +7,7 @@
 #include <Controls.hpp>
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
+#include "Unit2.h"
 #include <Grids.hpp>
 #include <ImgList.hpp>
 #include <ExtCtrls.hpp>

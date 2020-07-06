@@ -24,6 +24,7 @@ int bullet_count = 0;
 const int max_x = 64, max_y = 30;  // max points
 int grid_pos[max_x][max_y];        // spacefield data
 
+int debug=0;
 //---------------------------------------------------------------------------
 void grid_zero()
 {
@@ -84,6 +85,7 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
 {
     //ShowMessage(IntToStr(Key));
 
+
     switch (Key)
     {
         case 97:  { t_move_left->Enabled = true; break; }; // left
@@ -93,6 +95,10 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
 
         //case 32: { t_bullet->Enabled = true; bullet_count++;  break; }; // do not work at all
 
+        case 96: {
+            if (debug==0) { debug_form->Show(); main_form->SetFocus(); debug++; }
+            else { debug_form->Close(); debug--; }
+            break; }
         case 27: { main_form->Close(); break; };
     }
 }
@@ -109,8 +115,7 @@ void __fastcall Tmain_form::main_gridKeyUp(TObject *Sender, WORD &Key,
         case 83: { t_move_down->Enabled = false; break; }; // down
 
         case 16: {
-            if (sprint_cooldown>=79)
-            {   t_sprint->Enabled = true; tick_counter = 50; break; }
+            if (sprint_cooldown>=79) { t_sprint->Enabled = true; tick_counter = 50; break; }
             else break; };
 
         case 27: { main_form->Close(); break; };
@@ -180,11 +185,13 @@ void __fastcall Tmain_form::t_sprintTimer(TObject *Sender)
     }
     if (sprint_cooldown == 0)
     {
-        sprint_time = 20; sprint_cooldown = 80;
-        t_sprint->Enabled = false;
+        sprint_time = 30; sprint_cooldown = 80;
+        t_sprint->Enabled = false; return;
     }
-    sprint_time--;
+    if (sprint_time!=0) sprint_time--;
     sprint_cooldown--;
+    debug_form->L_boost_time->Caption = "Boost Time "+IntToStr(sprint_time);
+    debug_form->L_boost_cd->Caption = "Boost Cooldown "+IntToStr(sprint_cooldown);
 }
 //---------------------------------------------------------------------------
 

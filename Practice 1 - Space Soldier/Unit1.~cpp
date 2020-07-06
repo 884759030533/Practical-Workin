@@ -9,18 +9,20 @@
 #pragma resource "*.dfm"
 Tmain_form *main_form;
 
-int tick_counter = 200;
-int sprint_time = 20;
-int sprint_cooldown = 80;
+int tick_counter = 200;    // num of ticks for movement   5 ticks per second in normal speed
+                           //                            20 ticks per second with boost
 
-int PlPosX = 32;
-int PlPosY = 15;
+int sprint_time = 30;      // 3.0 seconds boost (4 times faster)
+int sprint_cooldown = 100;  // 7.0 seconds cooldown
+
+int PlPosX = 32;   //    spawn
+int PlPosY = 15;   //    point
 
 long bulletXY[2][32767];
 int bullet_count = 0;
 
-const int max_x = 64, max_y = 30;
-int grid_pos[max_x][max_y];
+const int max_x = 64, max_y = 30;  // max points
+int grid_pos[max_x][max_y];        // spacefield data
 
 //---------------------------------------------------------------------------
 void grid_zero()
@@ -71,7 +73,7 @@ __fastcall Tmain_form::Tmain_form(TComponent* Owner)
 void __fastcall Tmain_form::main_gridDrawCell(TObject *Sender, int ACol,
       int ARow, TRect &Rect, TGridDrawState State)
 {
-    sprite_list->Draw(main_grid->Canvas, Rect.Left, Rect.Top, grid_pos[ACol][ARow]);
+    sprite_list->Draw(main_grid->Canvas, Rect.Left, Rect.Top, grid_pos[ACol][ARow]); // transparent background
     //Invalidate();
 }
 //---------------------------------------------------------------------------
@@ -89,7 +91,7 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
         case 119: { t_move_up->Enabled = true; break; }; // up
         case 115: { t_move_down->Enabled = true; break; }; // down
 
-        case 32: { t_bullet->Enabled = true; bullet_count++;  break; };
+        //case 32: { t_bullet->Enabled = true; bullet_count++;  break; }; // do not work at all
 
         case 27: { main_form->Close(); break; };
     }
@@ -108,7 +110,7 @@ void __fastcall Tmain_form::main_gridKeyUp(TObject *Sender, WORD &Key,
 
         case 16: {
             if (sprint_cooldown>=79)
-            {   t_sprint->Enabled = true; tick_counter = 40; break; }
+            {   t_sprint->Enabled = true; tick_counter = 50; break; }
             else break; };
 
         case 27: { main_form->Close(); break; };
