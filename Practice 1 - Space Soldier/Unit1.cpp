@@ -18,14 +18,18 @@ int sprint_cooldown = 100;  // 7.0 seconds cooldown
 int PlPosX = 32;   //    spawn
 int PlPosY = 15;   //    point
 
+int EnPosX = 32;
+int EnPosY = 4;
+
 long bulletXY[2][32767];
-int bullet_count = 0;
+int bullet_count = -1, b_counter;
 
 const int max_x = 64, max_y = 30;  // max points
 int grid_pos[max_x][max_y];        // spacefield data
 
 int debug=0;
 //---------------------------------------------------------------------------
+void draw_ship(int shipID, int shipX, int shipY);
 void grid_zero()
 {
     for (int i=0; i<max_x; i++)
@@ -36,6 +40,7 @@ void grid_zero()
         }
     }
 }
+//---------------------------------------------------------------------------    Drawing algorythms
 void draw_ship(int shipID, int shipX, int shipY) // drawing ship at pos(x,y)
 {
     for (int j=1;j<=2;j++)
@@ -56,9 +61,26 @@ void draw_ship(int shipID, int shipX, int shipY) // drawing ship at pos(x,y)
 }
 void player_bullet(int bulletID, int bulletX, int bulletY)
 {
-    grid_pos[bulletX][bulletY] = bulletID;
+    /*if (bulletY+2!=0)
+    {
+        switch (bulletY)
+        {
+            case 8:
+            case 11: { };
+            case 9:
+            case 12: { };
+            case 10:
+            case 13: { };
+        }
+    } // */
+    if (bulletY>=0) {
+        grid_pos[bulletX][bulletY] = bulletID;
+        grid_pos[bulletX][bulletY+2] = 0; }
+    else {
+        grid_pos[bulletX][bulletY+2] = 0;
+        main_form->t_bullet->Enabled = false; }
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    Constructor
 __fastcall Tmain_form::Tmain_form(TComponent* Owner)
     : TForm(Owner)
 {
@@ -69,7 +91,7 @@ __fastcall Tmain_form::Tmain_form(TComponent* Owner)
 
     draw_ship(1, PlPosX, PlPosY);
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    Creating grid
 
 void __fastcall Tmain_form::main_gridDrawCell(TObject *Sender, int ACol,
       int ARow, TRect &Rect, TGridDrawState State)
@@ -77,7 +99,7 @@ void __fastcall Tmain_form::main_gridDrawCell(TObject *Sender, int ACol,
     sprite_list->Draw(main_grid->Canvas, Rect.Left, Rect.Top, grid_pos[ACol][ARow]); // transparent background
     //Invalidate();
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    ENABLE MOVE
 
 
 
@@ -93,8 +115,13 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
         case 119: { t_move_up->Enabled = true; break; }; // up
         case 115: { t_move_down->Enabled = true; break; }; // down
 
-        //case 32: { t_bullet->Enabled = true; bullet_count++;  break; }; // do not work at all
+        case 32: {
+            bullet_count++;
+            bulletXY[0][bullet_count] = PlPosX+2;
+            bulletXY[1][bullet_count] = PlPosY-2;
 
+            t_bullet->Enabled = true;
+            break; };
         case 96: {
             if (debug==0) { debug_form->Show(); main_form->SetFocus(); debug++; }
             else { debug_form->Close(); debug--; }
@@ -102,7 +129,7 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
         case 27: { main_form->Close(); break; };
     }
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    STOP MOVE
 
 void __fastcall Tmain_form::main_gridKeyUp(TObject *Sender, WORD &Key,
       TShiftState Shift)
@@ -121,7 +148,7 @@ void __fastcall Tmain_form::main_gridKeyUp(TObject *Sender, WORD &Key,
         case 27: { main_form->Close(); break; };
     }
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    MOVE LEFT
 
 
 
@@ -136,7 +163,7 @@ void __fastcall Tmain_form::t_move_leftTimer(TObject *Sender)
     }
     else t_move_left->Enabled = false;
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    MOVE RIGHT
 
 void __fastcall Tmain_form::t_move_rightTimer(TObject *Sender)
 {
@@ -149,7 +176,7 @@ void __fastcall Tmain_form::t_move_rightTimer(TObject *Sender)
     }
     else t_move_right->Enabled = false;
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    MOVE UP
 
 void __fastcall Tmain_form::t_move_upTimer(TObject *Sender)
 {
@@ -162,7 +189,7 @@ void __fastcall Tmain_form::t_move_upTimer(TObject *Sender)
     }
     else t_move_up->Enabled = false;
 }
-//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------    MOVE DOWN
 
 void __fastcall Tmain_form::t_move_downTimer(TObject *Sender)
 {
@@ -198,14 +225,21 @@ void __fastcall Tmain_form::t_sprintTimer(TObject *Sender)
 
 void __fastcall Tmain_form::t_bulletTimer(TObject *Sender)
 {
-    bulletXY[0][bullet_count] = PlPosX;
-    bulletXY[1][bullet_count] = PlPosY;
 
     player_bullet(7, bulletXY[0][bullet_count], bulletXY[1][bullet_count]);
 
-    bulletXY[1][bullet_count]+=1;
+    bulletXY[1][bullet_count]-=2;
 
     main_grid->Invalidate();
+}
+
+//---------------------------------------------------------------------------
+
+void __fastcall Tmain_form::t_enemyTimer(TObject *Sender)
+{
+    if ((EnPosX&&EnPosX+1&&EnPosX+2&&EnPosY&&EnPosY+1)==7)
+    { t_enemy->Enabled = false; return; }
+    draw_ship(8, EnPosX, EnPosY);
 }
 //---------------------------------------------------------------------------
 
