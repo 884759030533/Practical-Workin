@@ -1,6 +1,6 @@
 object debug_form: Tdebug_form
-  Left = 244
-  Top = 690
+  Left = 275
+  Top = 776
   BorderStyle = bsDialog
   Caption = 'debug window'
   ClientHeight = 241
