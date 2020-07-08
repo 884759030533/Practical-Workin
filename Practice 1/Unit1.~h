@@ -22,7 +22,6 @@ __published:	// IDE-managed Components
     TTimer *t_move_up;
     TTimer *t_move_down;
     TTimer *t_move_right;
-    TImage *img_bg;
     TLabel *LMvSpeedTxt;
     TLabel *LMvLen1;
     TLabel *LMvLenTxt;
@@ -33,7 +32,9 @@ __published:	// IDE-managed Components
     TLabel *LBoostCdTxt;
     TLabel *LBoostCd1;
     TTimer *t_shoot;
-    TImageList *ImageList1;
+    TImageList *img_list_shoot;
+    TImage *img_background;
+    TImage *img_bullet;
     void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
     void __fastcall FormKeyPress(TObject *Sender, char &Key);

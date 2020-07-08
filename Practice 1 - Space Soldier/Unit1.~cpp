@@ -9,6 +9,7 @@
 #pragma resource "*.dfm"
 Tmain_form *main_form;
 
+int debug_tick_counter = 0;
 int tick_counter = 200;    // num of ticks for movement   5 ticks per second in normal speed
                            //                            20 ticks per second with boost
 
@@ -21,8 +22,8 @@ int PlPosY = 15;   //    point
 int EnPosX = 32;
 int EnPosY = 4;
 
-long bulletXY[2][2048];
-int bullet_count = -1, b_counter;
+long bulletXY[2][1];
+int b_counter = 10;
 
 const int max_x = 64, max_y = 30;  // max points
 int grid_pos[max_x][max_y];        // spacefield data
@@ -61,42 +62,29 @@ void draw_ship(int shipID, int shipX, int shipY) // drawing ship at pos(x,y)
 }
 void player_bullet(int bulletID, int bulletX, int bulletY)
 {
-    /*if (bulletY+2!=0)
+    if (b_counter<=8)
     {
-        switch (bulletY)
+        if (grid_pos[bulletX][bulletY]!=0) for (int i=0; i<6; i++)
+        { grid_pos[bulletX][bulletY+i] = 0; return; }
+
+        for (int i=0; i<10; i++)
         {
-            case 8:
-            case 11: { };
-            case 9:
-            case 12: { };
-            case 10:
-            case 13: { };
+            if ((grid_pos[bulletX][bulletY+i]==1)||(grid_pos[bulletX][bulletY+i]==2)||(grid_pos[bulletX][bulletY+i]==3))
+            {   grid_pos[bulletX][bulletY+i-1] = 20; return; }
+            else if ((i>=6)/*||(grid_pos[bulletX][bulletY+i]==20)*/) grid_pos[bulletX][bulletY+i] = 0;
+            else grid_pos[bulletX][bulletY+i] = bulletID+i;
         }
-    } // */
-    /*if (bulletY>=0) {
-        grid_pos[bulletX][bulletY] = bulletID;
-        grid_pos[bulletX][bulletY+2] = 0; }
-    else {
-        grid_pos[bulletX][bulletY+2] = 0;
-        main_form->t_bullet->Enabled = false; }*/
-
-    if (bulletY<0) main_form->t_bullet->Enabled = false;
-
-    if (grid_pos[bulletX][bulletY]!=0) for (int i=0; i<6; i++)
-    { grid_pos[bulletX][bulletY+i] = 0; return; }
-
-    for (int i=0; i<6; i++)
-    {
-        if ((grid_pos[bulletX][bulletY+i]==1)||(grid_pos[bulletX][bulletY+i]==2)||(grid_pos[bulletX][bulletY+i]==3))
-        {   grid_pos[bulletX][bulletY+i] = 20; return; }
-        else grid_pos[bulletX][bulletY+i] = bulletID+i;
+        if (bulletY<0) { for (int i=0; i<6; i++)
+        { grid_pos[bulletX][bulletY+i] = 0; } }
     }
+    else main_form->t_bullet->Enabled = false;
+
 }
 //---------------------------------------------------------------------------    Constructor
 __fastcall Tmain_form::Tmain_form(TComponent* Owner)
     : TForm(Owner)
 {
-    //DoubleBuffered = true;
+    DoubleBuffered = true;
     //Screen->Cursors[crNoDrop] = LoadCursorFromFile("G_cur.ani");
     //Screen->Cursor = crNoDrop; // Load Green-styled Cursor
 
@@ -127,13 +115,14 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
         case 119: { t_move_up->Enabled = true; break; }; // up
         case 115: { t_move_down->Enabled = true; break; }; // down
 
-        case 32: {
-            bullet_count++;
-            bulletXY[0][bullet_count] = PlPosX+2;
-            bulletXY[1][bullet_count] = PlPosY-2;
+        case 32: { if (b_counter>=8)
+            {
+                bulletXY[0][0] = PlPosX+2;
+                bulletXY[1][0] = PlPosY-1;
+                b_counter = 0;
+                t_bullet->Enabled = true; break;}
+             else break; };
 
-            t_bullet->Enabled = true;
-            break; };
         case 96: {
             if (debug==0) { debug_form->Show(); main_form->SetFocus(); debug++; }
             else { debug_form->Close(); debug--; }
@@ -171,7 +160,7 @@ void __fastcall Tmain_form::t_move_leftTimer(TObject *Sender)
     {
         PlPosX-=1; grid_zero();
         draw_ship(1, PlPosX, PlPosY);
-        main_grid->Invalidate();
+        //main_grid->Invalidate();
     }
     else t_move_left->Enabled = false;
 }
@@ -184,7 +173,7 @@ void __fastcall Tmain_form::t_move_rightTimer(TObject *Sender)
     {
         PlPosX+=1; grid_zero();
         draw_ship(1, PlPosX, PlPosY);
-        main_grid->Invalidate();
+        //main_grid->Invalidate();
     }
     else t_move_right->Enabled = false;
 }
@@ -197,7 +186,7 @@ void __fastcall Tmain_form::t_move_upTimer(TObject *Sender)
     {
         PlPosY-=1; grid_zero();
         draw_ship(1, PlPosX, PlPosY);
-        main_grid->Invalidate();
+        //main_grid->Invalidate();
     }
     else t_move_up->Enabled = false;
 }
@@ -210,7 +199,7 @@ void __fastcall Tmain_form::t_move_downTimer(TObject *Sender)
     {
         PlPosY+=1; grid_zero();
         draw_ship(1, PlPosX, PlPosY);
-        main_grid->Invalidate();
+        //main_grid->Invalidate();
     }
     else t_move_right->Enabled = false;
 }
@@ -237,12 +226,12 @@ void __fastcall Tmain_form::t_sprintTimer(TObject *Sender)
 
 void __fastcall Tmain_form::t_bulletTimer(TObject *Sender)
 {
+    if (b_counter<8) { b_counter++; debug_form->Label4->Caption = IntToStr(b_counter); }
+    player_bullet(14, bulletXY[0][0], bulletXY[1][0]);
 
-    player_bullet(14, bulletXY[0][bullet_count], bulletXY[1][bullet_count]);
+    bulletXY[1][0]-=4;
 
-    bulletXY[1][bullet_count]-=6;
-
-    main_grid->Invalidate();
+    //main_grid->Invalidate();
 }
 
 //---------------------------------------------------------------------------
@@ -254,4 +243,16 @@ void __fastcall Tmain_form::t_enemyTimer(TObject *Sender)
     draw_ship(8, EnPosX, EnPosY);
 }
 //---------------------------------------------------------------------------
+
+void __fastcall Tmain_form::T_tick_screenTimer(TObject *Sender)
+{
+    main_grid->Invalidate();
+    debug_form->Label3->Caption = IntToStr(debug_tick_counter%10)+" ticks in second";
+    debug_tick_counter++;
+    //grid_pos[0][0] = 0;
+    //draw_ship(1, PlPosX, PlPosY);
+}
+//---------------------------------------------------------------------------
+
+
 

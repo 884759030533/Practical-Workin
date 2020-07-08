@@ -12,32 +12,33 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
 {
+    DoubleBuffered = true;
     Screen->Cursors[crNoDrop] = LoadCursorFromFile("G_cur.ani");
     Screen->Cursor = crNoDrop; // Load Green-styled Cursor
 }
 //---------------------------------------------------------------------------
 
-int move_length = 10;
-int move_speed = 1;
+int move_length = 20;
+int move_speed = 15;
 int sprint_timer = 0;
 int sprint_cooldown = 80; // 4.0 seconds cooldown
 
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
 {
-    //ShowMessage(IntToStr(Key));
+    ShowMessage(IntToStr(Key));
 
     /////////////// start move
     switch (Key)
     {
-        case 97:  { t_move_left->Interval = move_speed; break; }
-        case 100: { t_move_right->Interval = move_speed; break; }
-        case 119: { t_move_up->Interval = move_speed; break; }
-        case 115: { t_move_down->Interval = move_speed; break; }
+        case 97:  { t_move_left->Enabled = true; break; }
+        case 100: { t_move_right->Enabled = true; break; }
+        case 119: { t_move_up->Enabled = true; break; }
+        case 115: { t_move_down->Enabled = true; break; }
 
-        case 37: { t_move_left->Interval = move_speed; break; }
-        case 39: { t_move_right->Interval = move_speed; break; }
-        case 38: { t_move_up->Interval = move_speed; break; }
-        case 40: { t_move_down->Interval = move_speed; break; }
+        case 37: { t_move_left->Enabled = true; break; }
+        case 39: { t_move_right->Enabled = true; break; }
+        case 38: { t_move_up->Enabled = true; break; }
+        case 40: { t_move_down->Enabled = true; break; }
 
         case 122: { move_speed/=2; LMvSpeed1->Caption = move_speed; break; }
         case 120: { move_speed*=2; LMvSpeed1->Caption = move_speed; break; }
@@ -50,9 +51,10 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
             t_sprint_cd->Enabled = true;
             break; }  // */
 
-        case '1': { img_bg->Align = alLeft; break; }
-        case '2': { img_bg->Align = alBottom; break; }
-        case '3': { img_bg->Align = alRight; break; }
+
+        //case '1': { img_bg->Align = alLeft; break; }
+        //case '2': { img_bg->Align = alBottom; break; }
+        //case '3': { img_bg->Align = alRight; break; }
 
         case 27:  { Form1->Close(); break; }
     } //*/
@@ -70,15 +72,15 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
     ////////////////// stop move
     switch (Key)
     {
-        case 65: { t_move_left->Interval = 0; break; }
-        case 68: { t_move_right->Interval = 0; break; }
-        case 87: { t_move_up->Interval = 0; break; }
-        case 83: { t_move_down->Interval = 0; break; }
+        case 65: { t_move_left->Enabled = false; break; }
+        case 68: { t_move_right->Enabled = false; break; }
+        case 87: { t_move_up->Enabled = false; break; }
+        case 83: { t_move_down->Enabled = false; break; }
 
-        case 37: { t_move_left->Interval = 0; break; }
-        case 39: { t_move_right->Interval = 0; break; }
-        case 38: { t_move_up->Interval = 0; break; }
-        case 40: { t_move_down->Interval = 0; break; }
+        case 37: { t_move_left->Enabled = false; break; }
+        case 39: { t_move_right->Enabled = false; break; }
+        case 38: { t_move_up->Enabled = false; break; }
+        case 40: { t_move_down->Enabled = false; break; }
 
         case 16: {
             if ( (sprint_timer>=0) && (sprint_cooldown<=1) ) break;
@@ -87,9 +89,7 @@ void __fastcall TForm1::FormKeyUp(TObject *Sender, WORD &Key,
             LMvLenTxt->Caption = IntToStr(move_length);
             t_sprint->Enabled = true;
             t_sprint_cd->Enabled = true;
-            break; }  //////
-            //////
-            ///////////////////
+            break; }
     }
 }
 //---------------------------------------------------------------------------
@@ -121,9 +121,9 @@ void __fastcall TForm1::t_move_upTimer(TObject *Sender)
 
 void __fastcall TForm1::t_move_downTimer(TObject *Sender)
 {
-    if (img_move_test->Top+60 >= 530 )
+    if (img_move_test->Top+80 >= Form1->ClientHeight )
     {
-        img_move_test->Top = 470;
+        img_move_test->Top = Form1->ClientHeight-80;
         t_move_down->Interval = 0;
     }
     img_move_test->Top +=move_length;
@@ -132,9 +132,9 @@ void __fastcall TForm1::t_move_downTimer(TObject *Sender)
 
 void __fastcall TForm1::t_move_rightTimer(TObject *Sender)
 {
-    if (img_move_test->Left+60 >= 1072 )
+    if (img_move_test->Left+120 >= Form1->ClientWidth )
     {
-        img_move_test->Left = 1012;
+        img_move_test->Left = Form1->ClientWidth-120;
         t_move_right->Interval = 0;
     }
     img_move_test->Left +=move_length;
@@ -147,7 +147,7 @@ void __fastcall TForm1::t_sprintTimer(TObject *Sender)
     sprint_timer--;
     if (sprint_timer <= 0)
     {
-        move_length = 10;
+        move_length = 5;
         LMvLenTxt->Caption = IntToStr(move_length);
         LMvBoost1->Caption = "0";
         t_sprint->Enabled = false;
@@ -171,7 +171,12 @@ void __fastcall TForm1::t_sprint_cdTimer(TObject *Sender)
 
 void __fastcall TForm1::t_shootTimer(TObject *Sender)
 {
-    //
+    img_bullet->Visible = true;
+
 }
 //---------------------------------------------------------------------------
+
+
+
+
 
