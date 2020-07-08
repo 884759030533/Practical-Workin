@@ -18,7 +18,10 @@ int sprint_cooldown = 100;  // 7.0 seconds cooldown
 int PlPosX = 32;   //    spawn
 int PlPosY = 15;   //    point
 
-long bulletXY[2][32767];
+int EnPosX = 32;
+int EnPosY = 4;
+
+long bulletXY[2][2048];
 int bullet_count = -1, b_counter;
 
 const int max_x = 64, max_y = 30;  // max points
@@ -26,6 +29,7 @@ int grid_pos[max_x][max_y];        // spacefield data
 
 int debug=0;
 //---------------------------------------------------------------------------
+void draw_ship(int shipID, int shipX, int shipY);
 void grid_zero()
 {
     for (int i=0; i<max_x; i++)
@@ -55,7 +59,39 @@ void draw_ship(int shipID, int shipX, int shipY) // drawing ship at pos(x,y)
         shipID++;
     }// */
 }
-player_bullet(int bulletID, int bulletX, int bulletY);
+void player_bullet(int bulletID, int bulletX, int bulletY)
+{
+    /*if (bulletY+2!=0)
+    {
+        switch (bulletY)
+        {
+            case 8:
+            case 11: { };
+            case 9:
+            case 12: { };
+            case 10:
+            case 13: { };
+        }
+    } // */
+    /*if (bulletY>=0) {
+        grid_pos[bulletX][bulletY] = bulletID;
+        grid_pos[bulletX][bulletY+2] = 0; }
+    else {
+        grid_pos[bulletX][bulletY+2] = 0;
+        main_form->t_bullet->Enabled = false; }*/
+
+    if (bulletY<0) main_form->t_bullet->Enabled = false;
+
+    if (grid_pos[bulletX][bulletY]!=0) for (int i=0; i<6; i++)
+    { grid_pos[bulletX][bulletY+i] = 0; return; }
+
+    for (int i=0; i<6; i++)
+    {
+        if ((grid_pos[bulletX][bulletY+i]==1)||(grid_pos[bulletX][bulletY+i]==2)||(grid_pos[bulletX][bulletY+i]==3))
+        {   grid_pos[bulletX][bulletY+i] = 20; return; }
+        else grid_pos[bulletX][bulletY+i] = bulletID+i;
+    }
+}
 //---------------------------------------------------------------------------    Constructor
 __fastcall Tmain_form::Tmain_form(TComponent* Owner)
     : TForm(Owner)
@@ -97,8 +133,7 @@ void __fastcall Tmain_form::main_gridKeyPress(TObject *Sender, char &Key)
             bulletXY[1][bullet_count] = PlPosY-2;
 
             t_bullet->Enabled = true;
-            break; }; // do not work at all
-
+            break; };
         case 96: {
             if (debug==0) { debug_form->Show(); main_form->SetFocus(); debug++; }
             else { debug_form->Close(); debug--; }
@@ -203,18 +238,20 @@ void __fastcall Tmain_form::t_sprintTimer(TObject *Sender)
 void __fastcall Tmain_form::t_bulletTimer(TObject *Sender)
 {
 
-    player_bullet(7, bulletXY[0][bullet_count], bulletXY[1][bullet_count]);
+    player_bullet(14, bulletXY[0][bullet_count], bulletXY[1][bullet_count]);
 
-    bulletXY[1][bullet_count]-=2;
+    bulletXY[1][bullet_count]-=6;
 
     main_grid->Invalidate();
 }
-void player_bullet(int bulletID, int bulletX, int bulletY)
+
+//---------------------------------------------------------------------------
+
+void __fastcall Tmain_form::t_enemyTimer(TObject *Sender)
 {
-    if (bulletY>=0) {
-        grid_pos[bulletX][bulletY] = bulletID;
-        grid_pos[bulletX][bulletY+2] = 0; }
-    else { grid_pos[bulletX][bulletY+2] = 0; t_bullet->Enabled = false }
+    if ((EnPosX&&EnPosX+1&&EnPosX+2&&EnPosY&&EnPosY+1)==7)
+    { t_enemy->Enabled = false; return; }
+    draw_ship(8, EnPosX, EnPosY);
 }
 //---------------------------------------------------------------------------
 

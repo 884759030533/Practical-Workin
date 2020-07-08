@@ -25,6 +25,7 @@ __published:	// IDE-managed Components
     TTimer *t_sprint;
     TTimer *t_bullet;
     TTimer *t_enemy;
+    TTimer *T_tick_screen;
     void __fastcall main_gridDrawCell(TObject *Sender, int ACol, int ARow,
           TRect &Rect, TGridDrawState State);
     void __fastcall main_gridKeyPress(TObject *Sender, char &Key);
@@ -37,6 +38,7 @@ __published:	// IDE-managed Components
     void __fastcall t_sprintTimer(TObject *Sender);
     void __fastcall t_bulletTimer(TObject *Sender);
     void __fastcall t_enemyTimer(TObject *Sender);
+    void __fastcall T_tick_screenTimer(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall Tmain_form(TComponent* Owner);
