@@ -9,17 +9,6 @@
 #pragma resource "*.dfm"
 TForm1 *Form1;
 //---------------------------------------------------------------------------
-__fastcall TForm1::TForm1(TComponent* Owner)
-    : TForm(Owner)
-{
-    DoubleBuffered = true;
-    Screen->Cursors[crNoDrop] = LoadCursorFromFile(".\\cursor\\Cursor 1 (G) (anim).ani");
-    Screen->Cursor = crNoDrop; // Load Green-styled Cursor
-    //img_list_hp->Draw(img_player_hp->Canvas, img_player_hp->Left, img_player_hp->Top, 6);
-    img_player_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-    img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-}
-//---------------------------------------------------------------------------
 
 int move_length = 14;
 int move_speed = 15;
@@ -30,10 +19,32 @@ int low = 6;
 int show_hp = 1;
 
 
-bool enemy_hit = false;
-int en1HP = 6;
+bool enemy_hit[8];
+bool enemy_hitted = false;
+int enHP[8];
 
 int BPosX, BPosY, Bcd=0;
+
+//---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner)
+    : TForm(Owner)
+{
+    for (int i=0; i<8; i++)
+    {
+        enHP[i] = 6;
+        enemy_hit[i] = false;
+    }
+
+    DoubleBuffered = true;
+    Screen->Cursors[crNoDrop] = LoadCursorFromFile(".\\cursor\\Cursor 1 (G) (anim).ani");
+    Screen->Cursor = crNoDrop; // Load Green-styled Cursor
+    //img_list_hp->Draw(img_player_hp->Canvas, img_player_hp->Left, img_player_hp->Top, 6);
+    /*img_player_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+    img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");*/
+}
+//---------------------------------------------------------------------------
+
+
 
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
 {
@@ -75,12 +86,22 @@ void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
             {
                 img_player_hp->Visible = true;
                 img_enemy1_hp->Visible = true;
+                img_enemy2_hp->Visible = true;
+                img_enemy3_hp->Visible = true;
+                img_enemy4_hp->Visible = true;
+                img_enemy5_hp->Visible = true;
+                img_enemy6_hp->Visible = true;
                 show_hp = 1; break;
             }
             else
             {
                 img_player_hp->Visible = false;
                 img_enemy1_hp->Visible = false;
+                img_enemy2_hp->Visible = false;
+                img_enemy3_hp->Visible = false;
+                img_enemy4_hp->Visible = false;
+                img_enemy5_hp->Visible = false;
+                img_enemy6_hp->Visible = false;
                 show_hp = 0; break;
             }
         }
@@ -202,14 +223,22 @@ void __fastcall TForm1::t_sprintTimer(TObject *Sender)
 
 void __fastcall TForm1::t_shootTimer(TObject *Sender)
 {
+    //img_explosion_effect->Visible = false;
     if (Bcd <= 10)
     {
         if (img_bullet->Top>= -(img_bullet->Height/2))
         {
-            if (enemy_hit)
+            for (int i=0; i<8; i++)
+            {   enemy_hitted = enemy_hitted||enemy_hit[i]; }
+            if (enemy_hitted)
             {
             //  [ image_small_explosion.bmp ]
-                img_bullet->Left = -10;
+                /*img_explosion_effect->Visible = true;
+                img_explosion_effect->Top = img_bullet->Top+80;
+                img_explosion_effect->Left = img_bullet->Left+img_bullet->Width/2-img_explosion_effect->Width/2;
+                */
+                img_bullet->Left = -80;
+                enemy_hitted = false;
             }
             else
             {
@@ -230,30 +259,182 @@ void __fastcall TForm1::t_shootTimer(TObject *Sender)
 
 void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
 {
-    if (en1HP != 0)
+    if (enHP[0] != 0)
     {
         img_enemy1_hp->Left = img_enemy_1->Left;
         img_enemy1_hp->Top = img_enemy_1->Top+img_enemy_1->Height+10;
 
-        enemy_hit = (img_bullet->Left+img_bullet->Width <= img_enemy_1->Left+img_enemy_1->Width)&&(img_bullet->Left >= img_enemy_1->Left)&&(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height);
+        enemy_hit[0] = (img_bullet->Left+img_bullet->Width <= img_enemy_1->Left+img_enemy_1->Width)&&(img_bullet->Left >= img_enemy_1->Left)&&(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height);
         //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
 
-        if (enemy_hit)
+        if (enemy_hit[0])
         {
-            if (en1HP-1 != 0)
+            if (enHP[0]-1 != 0)
             {
-                en1HP-=1;
-                img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(en1HP)+".bmp");
+                enHP[0]-=1;
+                img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[0])+".bmp");
             }
             else //(en1HP-1 == 0)
             {
             //  [ img_big_explosion.bmp ]  // may be even .gif
                 img_enemy_1->Visible = false;
-                en1HP = 0; enemy_hit = false;
+                img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[0] = 0; enemy_hit[0] = false;
                 img_enemy1_hp->Visible = false; return;
             }
         }
     }
 }
 //---------------------------------------------------------------------------
+
+void __fastcall TForm1::t_enemy_2Timer(TObject *Sender)
+{
+    if (enHP[1] != 0)
+    {
+        img_enemy2_hp->Left = img_enemy_2->Left;
+        img_enemy2_hp->Top = img_enemy_2->Top+img_enemy_2->Height+10;
+
+        enemy_hit[1] = (img_bullet->Left+img_bullet->Width <= img_enemy_2->Left+img_enemy_2->Width)&&(img_bullet->Left >= img_enemy_2->Left)&&(img_bullet->Top <= img_enemy_2->Top-img_enemy_2->Height);
+        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+
+        if (enemy_hit[1])
+        {
+            if (enHP[1]-1 != 0)
+            {
+                enHP[1]-=1;
+                img_enemy2_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[1])+".bmp");
+            }
+            else //(en1HP-1 == 0)
+            {
+            //  [ img_big_explosion.bmp ]  // may be even .gif
+                img_enemy_2->Visible = false;
+                img_enemy2_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[1] = 0; enemy_hit[1] = false;
+                img_enemy2_hp->Visible = false; return;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::t_enemy_3Timer(TObject *Sender)
+{
+    if (enHP[2] != 0)
+    {
+        img_enemy3_hp->Left = img_enemy_3->Left;
+        img_enemy3_hp->Top = img_enemy_3->Top+img_enemy_3->Height+10;
+
+        enemy_hit[2] = (img_bullet->Left+img_bullet->Width <= img_enemy_3->Left+img_enemy_3->Width)&&(img_bullet->Left >= img_enemy_3->Left)&&(img_bullet->Top <= img_enemy_3->Top-img_enemy_3->Height);
+        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+
+        if (enemy_hit[2])
+        {
+            if (enHP[2]-1 != 0)
+            {
+                enHP[2]-=1;
+                img_enemy3_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[2])+".bmp");
+            }
+            else //(en1HP-1 == 0)
+            {
+            //  [ img_big_explosion.bmp ]  // may be even .gif
+                img_enemy_3->Visible = false;
+                img_enemy3_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[2] = 0; enemy_hit[2] = false;
+                img_enemy3_hp->Visible = false; return;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::t_enemy_4Timer(TObject *Sender)
+{
+    if (enHP[3] != 0)
+    {
+        img_enemy4_hp->Left = img_enemy_4->Left;
+        img_enemy4_hp->Top = img_enemy_4->Top+img_enemy_4->Height+10;
+
+        enemy_hit[3] = (img_bullet->Left+img_bullet->Width <= img_enemy_4->Left+img_enemy_4->Width)&&(img_bullet->Left >= img_enemy_4->Left)&&(img_bullet->Top <= img_enemy_4->Top-img_enemy_4->Height);
+        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+
+        if (enemy_hit[3])
+        {
+            if (enHP[3]-1 != 0)
+            {
+                enHP[3]-=1;
+                img_enemy4_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[3])+".bmp");
+            }
+            else //(en1HP-1 == 0)
+            {
+            //  [ img_big_explosion.bmp ]  // may be even .gif
+                img_enemy_4->Visible = false;
+                img_enemy4_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[3] = 0; enemy_hit[3] = false;
+                img_enemy4_hp->Visible = false; return;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::t_enemy_5Timer(TObject *Sender)
+{
+    if (enHP[4] != 0)
+    {
+        img_enemy5_hp->Left = img_enemy_5->Left;
+        img_enemy5_hp->Top = img_enemy_5->Top+img_enemy_5->Height+10;
+
+        enemy_hit[4] = (img_bullet->Left+img_bullet->Width <= img_enemy_5->Left+img_enemy_5->Width)&&(img_bullet->Left >= img_enemy_5->Left)&&(img_bullet->Top <= img_enemy_5->Top-img_enemy_5->Height);
+        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+
+        if (enemy_hit[4])
+        {
+            if (enHP[4]-1 != 0)
+            {
+                enHP[4]-=1;
+                img_enemy5_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[4])+".bmp");
+            }
+            else //(en1HP-1 == 0)
+            {
+            //  [ img_big_explosion.bmp ]  // may be even .gif
+                img_enemy_5->Visible = false;
+                img_enemy5_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[4] = 0; enemy_hit[4] = false;
+                img_enemy5_hp->Visible = false; return;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::t_enemy_6Timer(TObject *Sender)
+{
+    if (enHP[5] != 0)
+    {
+        img_enemy6_hp->Left = img_enemy_6->Left;
+        img_enemy6_hp->Top = img_enemy_6->Top+img_enemy_6->Height+10;
+
+        enemy_hit[5] = (img_bullet->Left+img_bullet->Width <= img_enemy_6->Left+img_enemy_6->Width)&&(img_bullet->Left >= img_enemy_6->Left)&&(img_bullet->Top <= img_enemy_6->Top-img_enemy_6->Height);
+        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+
+        if (enemy_hit[5])
+        {
+            if (enHP[5]-1 != 0)
+            {
+                enHP[5]-=1;
+                img_enemy6_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[5])+".bmp");
+            }
+            else //(en1HP-1 == 0)
+            {
+            //  [ img_big_explosion.bmp ]  // may be even .gif
+                img_enemy_6->Visible = false;
+                img_enemy6_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[5] = 0; enemy_hit[5] = false;
+                img_enemy6_hp->Visible = false; return;
+            }
+        }
+    }
+}
+//---------------------------------------------------------------------------
+
 
