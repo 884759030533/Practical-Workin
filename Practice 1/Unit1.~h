@@ -16,7 +16,7 @@
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
-    TImage *img_move_test;
+    TImage *img_player;
     TLabel *LMvSpeed1;
     TTimer *t_move_left;
     TTimer *t_move_up;
@@ -28,13 +28,16 @@ __published:	// IDE-managed Components
     TTimer *t_sprint;
     TLabel *LMvBoostTxt;
     TLabel *LMvBoost1;
-    TTimer *t_sprint_cd;
     TLabel *LBoostCdTxt;
     TLabel *LBoostCd1;
     TTimer *t_shoot;
-    TImageList *img_list_shoot;
+    TImageList *img_list_hp;
     TImage *img_background;
     TImage *img_bullet;
+    TImage *img_enemy_1;
+    TImage *img_player_hp;
+    TImage *img_enemy1_hp;
+    TTimer *t_enemy_1;
     void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
     void __fastcall FormKeyPress(TObject *Sender, char &Key);
@@ -43,8 +46,8 @@ __published:	// IDE-managed Components
     void __fastcall t_move_downTimer(TObject *Sender);
     void __fastcall t_move_rightTimer(TObject *Sender);
     void __fastcall t_sprintTimer(TObject *Sender);
-    void __fastcall t_sprint_cdTimer(TObject *Sender);
     void __fastcall t_shootTimer(TObject *Sender);
+    void __fastcall t_enemy_1Timer(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

@@ -29,6 +29,10 @@ int sprint_cooldown = 80; // 4.0 seconds cooldown
 int low = 6;
 int show_hp = 1;
 
+
+bool enemy_hit = false;
+int en1HP = 6;
+
 int BPosX, BPosY, Bcd=0;
 
 void __fastcall TForm1::FormKeyPress(TObject *Sender, char &Key)
@@ -202,12 +206,16 @@ void __fastcall TForm1::t_shootTimer(TObject *Sender)
     {
         if (img_bullet->Top>= -(img_bullet->Height/2))
         {
-            img_bullet->Visible = true;
-            if (false)
+            if (enemy_hit)
             {
-            //  [if hit enemy or something else]
+            //  [ image_small_explosion.bmp ]
+                img_bullet->Left = -10;
             }
-            else img_bullet->Top -=80;
+            else
+            {
+                img_bullet->Visible = true;
+                img_bullet->Top -=80;
+            }
         }
         else { img_bullet->Visible = false; }
         Bcd++;
@@ -215,21 +223,36 @@ void __fastcall TForm1::t_shootTimer(TObject *Sender)
     else { Bcd = 0; t_shoot->Enabled = false; }
 }
 //---------------------------------------------------------------------------
-
-
+//(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height)&&( )
+//img_enemy_1->Left < img_bullet->Left+img_bullet->Width/2 < img_enemy_1->Left+img_enemy_1->Width
 
 
 
 void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
 {
-    int HP = 6;
-    img_enemy1_hp->Left = img_enemy_1->Left;
-    img_enemy1_hp->Top = img_enemy_1->Top+img_enemy_1->Height+10;
-    if ((img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height)&&(img_enemy_1->Left < img_bullet->Left+img_bullet->Width/2 < img_enemy_1->Left+img_enemy_1->Width))
+    if (en1HP != 0)
     {
-        if (HP-1 == 0) img_enemy_1->Visible = false;
-        HP-=1;
-        img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(HP)+".bmp");
+        img_enemy1_hp->Left = img_enemy_1->Left;
+        img_enemy1_hp->Top = img_enemy_1->Top+img_enemy_1->Height+10;
+
+        enemy_hit = (img_bullet->Left+img_bullet->Width <= img_enemy_1->Left+img_enemy_1->Width)&&(img_bullet->Left >= img_enemy_1->Left)&&(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height);
+        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+
+        if (enemy_hit)
+        {
+            if (en1HP-1 != 0)
+            {
+                en1HP-=1;
+                img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(en1HP)+".bmp");
+            }
+            else //(en1HP-1 == 0)
+            {
+            //  [ img_big_explosion.bmp ]  // may be even .gif
+                img_enemy_1->Visible = false;
+                en1HP = 0; enemy_hit = false;
+                img_enemy1_hp->Visible = false; return;
+            }
+        }
     }
 }
 //---------------------------------------------------------------------------
