@@ -4,6 +4,7 @@
 #pragma hdrstop
 
 #include "Unit1.h"
+#include <math.h>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -19,9 +20,9 @@ int low = 6;
 int show_hp = 1;
 
 
-bool enemy_hit[8];
+bool enemy_hit[8]; // [0] = player, [1+] = enemies
 bool enemy_hitted = false;
-int enHP[8];
+int enHP[8]; // [0] = player, [1+] = enemies
 
 int BPosX, BPosY, Bcd=0;
 
@@ -36,7 +37,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
     }
 
     DoubleBuffered = true;
-    Screen->Cursors[crNoDrop] = LoadCursorFromFile(".\\cursor\\Cursor 1 (G) (anim).ani");
+    Screen->Cursors[crNoDrop] = LoadCursorFromFile(".\\cursor\\cur1.cur");
     Screen->Cursor = crNoDrop; // Load Green-styled Cursor
     //img_list_hp->Draw(img_player_hp->Canvas, img_player_hp->Left, img_player_hp->Top, 6);
     /*img_player_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
@@ -255,185 +256,85 @@ void __fastcall TForm1::t_shootTimer(TObject *Sender)
 //(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height)&&( )
 //img_enemy_1->Left < img_bullet->Left+img_bullet->Width/2 < img_enemy_1->Left+img_enemy_1->Width
 
-
-
-void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
+//---------------------------------------------------------------------------
+void ship_structure (TImage *ship, TImage *health,TImage *bullet, int X, int Y, int step, int damage, int id, TImageList *list)
 {
-    if (enHP[0] != 0)
+    if (enHP[id] != 0)
     {
-        img_enemy1_hp->Left = img_enemy_1->Left;
-        img_enemy1_hp->Top = img_enemy_1->Top+img_enemy_1->Height+10;
+        health->Left = ship->Left;
+        health->Top = ship->Top+ship->Height+10;
 
-        enemy_hit[0] = (img_bullet->Left+img_bullet->Width <= img_enemy_1->Left+img_enemy_1->Width)&&(img_bullet->Left >= img_enemy_1->Left)&&(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height);
-        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
+        enemy_hit[id] = (bullet->Left+bullet->Width <= ship->Left+ship->Width) && (bullet->Left >= ship->Left) && (bullet->Top-100 <= ship->Top-ship->Height);
 
-        if (enemy_hit[0])
+        if (enemy_hit[id])
         {
-            if (enHP[0]-1 != 0)
+            if (enHP[id]-damage > 0)
             {
-                enHP[0]-=1;
-                img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[0])+".bmp");
+                enHP[id]-=damage;
+                TRect rect(0,0,health->Width, health->Height);
+                health->Canvas->Brush->Color = clLime;
+                health->Canvas->FillRect(rect);
+                list->Draw(health->Canvas, 0, 0, enHP[id]);
             }
-            else //(en1HP-1 == 0)
+            else
             {
-            //  [ img_big_explosion.bmp ]  // may be even .gif
-                img_enemy_1->Visible = false;
-                img_enemy1_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-                enHP[0] = 0; enemy_hit[0] = false;
-                img_enemy1_hp->Visible = false; return;
+                ship->Visible = false;
+                health->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
+                enHP[id] = 0; enemy_hit[id] = false;
+                //health->Visible = false;
+                return;
             }
         }
+        /*int midX = ship->Left + ship->Width/2;
+        int midY = ship->Top + ship->Height/2;
+        int dx = dest.X - midX;
+        int dy = dest.Y - midY;
+        /*if(abs(dx)<step && abs(dy)<step)
+        {
+                needWalk=false;
+                return;
+        }//
+        //needWalk = true;
+        double angle = atan2(dy, dx);
+        img->Left += step*cos(angle);
+        img->Top += step*sin(angle);
+    //  [move]*/
     }
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
+{
+    ship_structure(img_enemy_1, img_enemy1_hp, img_bullet, 0, 0, 10, 1, 1, img_list_hp);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::t_enemy_2Timer(TObject *Sender)
 {
-    if (enHP[1] != 0)
-    {
-        img_enemy2_hp->Left = img_enemy_2->Left;
-        img_enemy2_hp->Top = img_enemy_2->Top+img_enemy_2->Height+10;
-
-        enemy_hit[1] = (img_bullet->Left+img_bullet->Width <= img_enemy_2->Left+img_enemy_2->Width)&&(img_bullet->Left >= img_enemy_2->Left)&&(img_bullet->Top <= img_enemy_2->Top-img_enemy_2->Height);
-        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
-
-        if (enemy_hit[1])
-        {
-            if (enHP[1]-1 != 0)
-            {
-                enHP[1]-=1;
-                img_enemy2_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[1])+".bmp");
-            }
-            else //(en1HP-1 == 0)
-            {
-            //  [ img_big_explosion.bmp ]  // may be even .gif
-                img_enemy_2->Visible = false;
-                img_enemy2_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-                enHP[1] = 0; enemy_hit[1] = false;
-                img_enemy2_hp->Visible = false; return;
-            }
-        }
-    }
+    ship_structure(img_enemy_2, img_enemy2_hp, img_bullet, 0, 0, 10, 1, 2, img_list_hp);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::t_enemy_3Timer(TObject *Sender)
 {
-    if (enHP[2] != 0)
-    {
-        img_enemy3_hp->Left = img_enemy_3->Left;
-        img_enemy3_hp->Top = img_enemy_3->Top+img_enemy_3->Height+10;
-
-        enemy_hit[2] = (img_bullet->Left+img_bullet->Width <= img_enemy_3->Left+img_enemy_3->Width)&&(img_bullet->Left >= img_enemy_3->Left)&&(img_bullet->Top <= img_enemy_3->Top-img_enemy_3->Height);
-        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
-
-        if (enemy_hit[2])
-        {
-            if (enHP[2]-1 != 0)
-            {
-                enHP[2]-=1;
-                img_enemy3_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[2])+".bmp");
-            }
-            else //(en1HP-1 == 0)
-            {
-            //  [ img_big_explosion.bmp ]  // may be even .gif
-                img_enemy_3->Visible = false;
-                img_enemy3_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-                enHP[2] = 0; enemy_hit[2] = false;
-                img_enemy3_hp->Visible = false; return;
-            }
-        }
-    }
+    ship_structure(img_enemy_3, img_enemy3_hp, img_bullet, 0, 0, 10, 3, 3, img_list_hp);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::t_enemy_4Timer(TObject *Sender)
 {
-    if (enHP[3] != 0)
-    {
-        img_enemy4_hp->Left = img_enemy_4->Left;
-        img_enemy4_hp->Top = img_enemy_4->Top+img_enemy_4->Height+10;
-
-        enemy_hit[3] = (img_bullet->Left+img_bullet->Width <= img_enemy_4->Left+img_enemy_4->Width)&&(img_bullet->Left >= img_enemy_4->Left)&&(img_bullet->Top <= img_enemy_4->Top-img_enemy_4->Height);
-        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
-
-        if (enemy_hit[3])
-        {
-            if (enHP[3]-1 != 0)
-            {
-                enHP[3]-=1;
-                img_enemy4_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[3])+".bmp");
-            }
-            else //(en1HP-1 == 0)
-            {
-            //  [ img_big_explosion.bmp ]  // may be even .gif
-                img_enemy_4->Visible = false;
-                img_enemy4_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-                enHP[3] = 0; enemy_hit[3] = false;
-                img_enemy4_hp->Visible = false; return;
-            }
-        }
-    }
+    ship_structure(img_enemy_4, img_enemy4_hp, img_bullet, 0, 0, 10, 3, 4, img_list_hp);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::t_enemy_5Timer(TObject *Sender)
 {
-    if (enHP[4] != 0)
-    {
-        img_enemy5_hp->Left = img_enemy_5->Left;
-        img_enemy5_hp->Top = img_enemy_5->Top+img_enemy_5->Height+10;
-
-        enemy_hit[4] = (img_bullet->Left+img_bullet->Width <= img_enemy_5->Left+img_enemy_5->Width)&&(img_bullet->Left >= img_enemy_5->Left)&&(img_bullet->Top <= img_enemy_5->Top-img_enemy_5->Height);
-        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
-
-        if (enemy_hit[4])
-        {
-            if (enHP[4]-1 != 0)
-            {
-                enHP[4]-=1;
-                img_enemy5_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[4])+".bmp");
-            }
-            else //(en1HP-1 == 0)
-            {
-            //  [ img_big_explosion.bmp ]  // may be even .gif
-                img_enemy_5->Visible = false;
-                img_enemy5_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-                enHP[4] = 0; enemy_hit[4] = false;
-                img_enemy5_hp->Visible = false; return;
-            }
-        }
-    }
+    ship_structure(img_enemy_5, img_enemy5_hp, img_bullet, 0, 0, 10, 2, 5, img_list_hp);
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::t_enemy_6Timer(TObject *Sender)
 {
-    if (enHP[5] != 0)
-    {
-        img_enemy6_hp->Left = img_enemy_6->Left;
-        img_enemy6_hp->Top = img_enemy_6->Top+img_enemy_6->Height+10;
-
-        enemy_hit[5] = (img_bullet->Left+img_bullet->Width <= img_enemy_6->Left+img_enemy_6->Width)&&(img_bullet->Left >= img_enemy_6->Left)&&(img_bullet->Top <= img_enemy_6->Top-img_enemy_6->Height);
-        //if_en_hit = if_en_hit && (img_bullet->Left+img_bullet->Width >= img_enemy_1->Left+img_enemy_1->Width);
-
-        if (enemy_hit[5])
-        {
-            if (enHP[5]-1 != 0)
-            {
-                enHP[5]-=1;
-                img_enemy6_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_"+IntToStr(enHP[5])+".bmp");
-            }
-            else //(en1HP-1 == 0)
-            {
-            //  [ img_big_explosion.bmp ]  // may be even .gif
-                img_enemy_6->Visible = false;
-                img_enemy6_hp->Picture->LoadFromFile(".\\hp_bars\\Health_bar_6.bmp");
-                enHP[5] = 0; enemy_hit[5] = false;
-                img_enemy6_hp->Visible = false; return;
-            }
-        }
-    }
+    ship_structure(img_enemy_6, img_enemy6_hp, img_bullet, 0, 0, 10, 2, 6, img_list_hp);
 }
 //---------------------------------------------------------------------------
 
