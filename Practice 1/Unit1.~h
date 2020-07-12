@@ -38,11 +38,6 @@ __published:	// IDE-managed Components
     TImage *img_player_hp;
     TImage *img_enemy1_hp;
     TTimer *t_enemy_1;
-    TTimer *t_enemy_2;
-    TTimer *t_enemy_3;
-    TTimer *t_enemy_4;
-    TTimer *t_enemy_5;
-    TTimer *t_enemy_6;
     TImage *img_enemy_2;
     TImage *img_enemy_3;
     TImage *img_enemy_4;
@@ -54,6 +49,7 @@ __published:	// IDE-managed Components
     TImage *img_enemy5_hp;
     TImage *img_enemy6_hp;
     TImage *img_explosion_effect;
+    TLabel *Label1;
     void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
     void __fastcall FormKeyPress(TObject *Sender, char &Key);
@@ -64,11 +60,6 @@ __published:	// IDE-managed Components
     void __fastcall t_sprintTimer(TObject *Sender);
     void __fastcall t_shootTimer(TObject *Sender);
     void __fastcall t_enemy_1Timer(TObject *Sender);
-    void __fastcall t_enemy_2Timer(TObject *Sender);
-    void __fastcall t_enemy_3Timer(TObject *Sender);
-    void __fastcall t_enemy_4Timer(TObject *Sender);
-    void __fastcall t_enemy_5Timer(TObject *Sender);
-    void __fastcall t_enemy_6Timer(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
     __fastcall TForm1(TComponent* Owner);

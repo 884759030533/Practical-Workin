@@ -49,6 +49,7 @@ __published:	// IDE-managed Components
     TImage *img_enemy5_hp;
     TImage *img_enemy6_hp;
     TImage *img_explosion_effect;
+    TLabel *Label1;
     void __fastcall FormKeyUp(TObject *Sender, WORD &Key,
           TShiftState Shift);
     void __fastcall FormKeyPress(TObject *Sender, char &Key);
