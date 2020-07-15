@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 203
-  Top = 221
+  Left = 244
+  Top = 247
   Anchors = [akRight, akBottom]
   BorderStyle = bsSingle
-  Caption = 'Space Soldier: Space Soldier: Space Soldier:'
+  Caption = 'Space Soldier: '#1047#1076#1077#1089#1100' '#1084#1086#1075#1083#1072' '#1073#1099#1090#1100' '#1074#1072#1096#1072' '#1088#1077#1082#1083#1072#1084#1072
   ClientHeight = 700
   ClientWidth = 1400
   Color = clBtnFace

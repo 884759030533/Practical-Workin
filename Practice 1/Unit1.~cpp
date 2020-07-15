@@ -52,7 +52,7 @@ void load_path(char *filename, GraphicPoint *path, GraphicPointMass *coord, int 
     {   f>>coord[sp_point].coord[i].X>>coord[sp_point].coord[i].Y; }
     f>>pointsCount[point];
     for (int i=0; i<pointsCount[point]; i++)
-    {   f>>path[i].X>>path[i].Y; }
+    {   f>>path[i].X>>path[i].Y; };
     f.close();
 }
 //---------------------------------------------------------------------------    Constructor
@@ -282,6 +282,10 @@ void __fastcall TForm1::t_shootTimer(TObject *Sender)
     }
     else { Bcd = 0; t_shoot->Enabled = false; }
 }
+void enemie_shooter(TImage *bullet, bool ship_hitted)
+{
+
+}
 //---------------------------------------------------------------------------
 //(img_bullet->Top <= img_enemy_1->Top-img_enemy_1->Height)&&( )
 //img_enemy_1->Left < img_bullet->Left+img_bullet->Width/2 < img_enemy_1->Left+img_enemy_1->Width
@@ -383,7 +387,7 @@ void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
 
     if (all_ships_destroyed(1, 6))
     {
-        _switch = 0+rand()%2;
+        _switch = 0+rand()%3;
 
         ship_rebuild(1, img_enemy_1, img_enemy1_hp, img_list_hp);
         ship_rebuild(2, img_enemy_2, img_enemy2_hp, img_list_hp);
@@ -396,12 +400,12 @@ void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
         ship_rebuild(1, img_enemy_1, img_enemy1_hp, img_list_hp);
         ship_rebuild(1, img_enemy_1, img_enemy1_hp, img_list_hp); // */
 
-        img_enemy_1->Left = spawn_point[_switch-1].coord[0].X; img_enemy_1->Top = spawn_point[_switch-1].coord[0].Y;
-        img_enemy_2->Left = spawn_point[_switch-1].coord[1].X; img_enemy_2->Top = spawn_point[_switch-1].coord[1].Y;
-        img_enemy_3->Left = spawn_point[_switch-1].coord[2].X; img_enemy_3->Top = spawn_point[_switch-1].coord[2].Y;
-        img_enemy_4->Left = spawn_point[_switch-1].coord[3].X; img_enemy_4->Top = spawn_point[_switch-1].coord[3].Y;
-        img_enemy_5->Left = spawn_point[_switch-1].coord[4].X; img_enemy_5->Top = spawn_point[_switch-1].coord[4].Y;
-        img_enemy_6->Left = spawn_point[_switch-1].coord[5].X; img_enemy_6->Top = spawn_point[_switch-1].coord[5].Y;
+        img_enemy_1->Left = spawn_point[_switch].coord[0].X; img_enemy_1->Top = spawn_point[_switch].coord[0].Y;
+        img_enemy_2->Left = spawn_point[_switch].coord[1].X; img_enemy_2->Top = spawn_point[_switch].coord[1].Y;
+        img_enemy_3->Left = spawn_point[_switch].coord[2].X; img_enemy_3->Top = spawn_point[_switch].coord[2].Y;
+        img_enemy_4->Left = spawn_point[_switch].coord[3].X; img_enemy_4->Top = spawn_point[_switch].coord[3].Y;
+        img_enemy_5->Left = spawn_point[_switch].coord[4].X; img_enemy_5->Top = spawn_point[_switch].coord[4].Y;
+        img_enemy_6->Left = spawn_point[_switch].coord[5].X; img_enemy_6->Top = spawn_point[_switch].coord[5].Y;
     /*  img_enemy_1->Left = spawn_point[_switch].coord[0].X; img_enemy_1->Top = spawn_point[_switch].coord[0].Y;
         img_enemy_1->Left = spawn_point[_switch].coord[0].X; img_enemy_1->Top = spawn_point[_switch].coord[0].Y;
         img_enemy_1->Left = spawn_point[_switch].coord[0].X; img_enemy_1->Top = spawn_point[_switch].coord[0].Y;

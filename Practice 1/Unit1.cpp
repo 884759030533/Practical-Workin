@@ -378,12 +378,12 @@ void __fastcall TForm1::t_enemy_1Timer(TObject *Sender)
     randomize();
     bool need_move;
     int _switch = 1;
-    ship_structure(img_enemy_1, img_enemy1_hp, img_bullet, 4, 1, img_list_hp);
-    ship_structure(img_enemy_2, img_enemy2_hp, img_bullet, 4, 2, img_list_hp);
-    ship_structure(img_enemy_3, img_enemy3_hp, img_bullet, 4, 3, img_list_hp);
-    ship_structure(img_enemy_4, img_enemy4_hp, img_bullet, 4, 4, img_list_hp);
-    ship_structure(img_enemy_5, img_enemy5_hp, img_bullet, 4, 5, img_list_hp);
-    ship_structure(img_enemy_6, img_enemy6_hp, img_bullet, 4, 6, img_list_hp);
+    ship_structure(img_enemy_1, img_enemy1_hp, img_bullet, 1, 1, img_list_hp);
+    ship_structure(img_enemy_2, img_enemy2_hp, img_bullet, 1, 2, img_list_hp);
+    ship_structure(img_enemy_3, img_enemy3_hp, img_bullet, 1, 3, img_list_hp);
+    ship_structure(img_enemy_4, img_enemy4_hp, img_bullet, 1, 4, img_list_hp);
+    ship_structure(img_enemy_5, img_enemy5_hp, img_bullet, 1, 5, img_list_hp);
+    ship_structure(img_enemy_6, img_enemy6_hp, img_bullet, 1, 6, img_list_hp);
 
     if (all_ships_destroyed(1, 6))
     {
